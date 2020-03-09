@@ -42,6 +42,11 @@ public class quadraticEquation
         int c = numbers.get(2);
 
         double delta = Math.abs(b*b-4*a*c);
+        if (delta < 0) 
+        {
+            System.out.println("Delta is negative and I can't handle complex numbers, sorry!");
+            System.exit(1);
+        }
         double x1 = (-1*b-Math.sqrt(delta))/(2*a);
         double x2 = (-1*b+Math.sqrt(delta))/(2*a);
 
