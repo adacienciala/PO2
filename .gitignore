@@ -32,3 +32,4 @@ _ReSharper*/
 .vscode/
 #Nuget packages folder
 packages/
+/given_path.txt
