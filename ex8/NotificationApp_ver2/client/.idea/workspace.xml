@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="client:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="62445712-61af-48e1-a3b7-345ef9303ab7" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ProjectId" id="1buQyfF5p3fzB5Itvz3r3stWczC" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/jcalendar-1.4.jar!/" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="RunManager">
+    <configuration name="NotificationApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="NotificationApp" />
+      <module name="client" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.NotificationApp" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="62445712-61af-48e1-a3b7-345ef9303ab7" name="Default Changelist" comment="" />
+      <created>1589479754393</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589479754393</updated>
+      <workItem from="1589479758054" duration="25000" />
+      <workItem from="1589481424816" duration="1564000" />
+      <workItem from="1589485369726" duration="338000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-990" y="-163" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1589485660539">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state x="-990" y="-163" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589485660539" />
+    <state x="-1014" y="-208" key="FileChooserDialogImpl" timestamp="1589481515893">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state x="-1014" y="-208" key="FileChooserDialogImpl/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589481515893" />
+    <state width="1397" height="222" key="GridCell.Tab.0.bottom" timestamp="1589484619425">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state width="1397" height="222" key="GridCell.Tab.0.bottom/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589484619425" />
+    <state width="1397" height="222" key="GridCell.Tab.0.center" timestamp="1589484619425">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state width="1397" height="222" key="GridCell.Tab.0.center/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589484619425" />
+    <state width="1397" height="222" key="GridCell.Tab.0.left" timestamp="1589484619424">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state width="1397" height="222" key="GridCell.Tab.0.left/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589484619424" />
+    <state width="1397" height="222" key="GridCell.Tab.0.right" timestamp="1589484619425">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state width="1397" height="222" key="GridCell.Tab.0.right/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589484619425" />
+    <state x="-1240" y="-375" key="SettingsEditor" timestamp="1589485681928">
+      <screen x="-1440" y="-382" width="1440" height="860" />
+    </state>
+    <state x="-1240" y="-375" key="SettingsEditor/0.0.1366.728/-1440.-382.1440.860@-1440.-382.1440.860" timestamp="1589485681928" />
+  </component>
+</project>
