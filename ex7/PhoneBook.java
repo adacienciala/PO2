@@ -94,7 +94,7 @@ class Person extends Record
         System.out.println("Name:\t\t" + name);
         System.out.println("Surname:\t" + surname);
         System.out.println("Address:\t" + address);
-        System.out.println("Phone number:\t+" + phoneNumber.getCountryCode().toString() + ' ' + phoneNumber.getPhoneNumber().toString() + '\n');
+        System.out.println("Phone number:\t+" + phoneNumber.getCountryCode() + ' ' + phoneNumber.getPhoneNumber() + '\n');
     }
 
     @Override
@@ -122,7 +122,7 @@ class Company extends Record
     {
         System.out.println("Company name:\t" + name);
         System.out.println("Address:\t" + address);
-        System.out.println("Phone number:\t+" + phoneNumber.getCountryCode().toString() + ' ' + phoneNumber.getPhoneNumber().toString() + '\n');
+        System.out.println("Phone number:\t+" + phoneNumber.getCountryCode() + ' ' + phoneNumber.getPhoneNumber() + '\n');
     }
     
     @Override
