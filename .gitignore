@@ -33,3 +33,7 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 /given_path.txt
+/Project/hareBox/*/.idea
+/Project/hareBox/*/out
+*.iml
+

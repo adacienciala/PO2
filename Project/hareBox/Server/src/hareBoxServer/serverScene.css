@@ -1,0 +1,19 @@
+.tab-header-background {
+    -fx-background-color: #000060;
+}
+
+.jfx-tab-pane .tab-selected-line {
+    -fx-border-color: #4366f3;
+}
+
+.jfx-tab-pane .tab .tab-label {
+    -fx-font-family: "Book Antiqua";
+    -fx-font-weight: normal;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16;
+    -fx-padding: 10px, 0px;
+}
+
+.text-area {
+    -fx-font-style: italic;
+}

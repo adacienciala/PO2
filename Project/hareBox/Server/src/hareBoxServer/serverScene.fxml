@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000060;" stylesheets="@serverScene.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hareBoxServer.ServerSceneController">
+   <children>
+      <AnchorPane layoutY="-7.0" prefHeight="300.0" prefWidth="600.0" style="-fx-background-color: #000060;" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <JFXTabPane layoutX="236.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="350.0" style="-fx-background-color: #FFFFFF;" tabMinWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="226.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-10.0">
+               <tabs>
+                  <Tab style="-fx-background-color: #000066;" text="SERVER" />
+               </tabs>
+            </JFXTabPane>
+            <FontAwesomeIconView fill="WHITE" glyphName="GROUP" layoutX="10.0" layoutY="31.0" size="20" wrappingWidth="23.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Label layoutX="55.0" layoutY="20.0" prefHeight="21.0" prefWidth="54.0" text="Users" textFill="WHITE" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font name="Book Antiqua" size="16.0" />
+               </font>
+            </Label>
+            <JFXListView fx:id="userListView" layoutX="10.0" layoutY="42.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="241.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="32.0" />
+            <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="177.0" layoutY="8.0" prefHeight="25.0" prefWidth="12.0" AnchorPane.leftAnchor="170.0" AnchorPane.topAnchor="0.0">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="REFRESH" size="16" wrappingWidth="12.0" />
+               </graphic>
+            </JFXButton>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </AnchorPane>
+      <AnchorPane layoutX="-7.0" layoutY="284.0" prefHeight="110.0" prefWidth="600.0" style="-fx-background-color: #000060;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <TextArea fx:id="logTA" editable="false" layoutX="12.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="578.0" stylesheets="@serverScene.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <Separator layoutX="11.0" layoutY="-1.0" prefHeight="3.0" prefWidth="600.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

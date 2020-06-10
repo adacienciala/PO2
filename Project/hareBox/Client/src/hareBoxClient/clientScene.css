@@ -1,0 +1,24 @@
+.label {
+    -fx-font-family: "Book Antiqua";
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.text-field {
+    -fx-background-color: transparent;
+    -fx-text-inner-color: #FFFFFF;
+    -fx-text-alignment: right;
+    -fx-font-family: "Book Antiqua";
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+}
+
+.jfx-button {
+    -fx-font-family: "Book Antiqua";
+    -jfx-button-type: RAISED;
+    -fx-background-color: #4366f3;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}

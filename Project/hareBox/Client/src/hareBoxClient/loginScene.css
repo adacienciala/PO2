@@ -1,0 +1,11 @@
+.jfx-text-field {
+    -fx-text-inner-color: #FFFFFF;
+}
+
+.jfx-button {
+    -jfx-button-type: RAISED;
+    -fx-background-color: #4366f3;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
