@@ -14,15 +14,15 @@ public class ClientUnit {
 
     private Socket userSocket;
     private ObjectInputStream inputStream;
-    private ObjectOutputStream outputStream;
+    public ObjectOutputStream outputStream;
     private File userDir;
+    private String username;
 
-    public ClientUnit(int port, File userDir, TextField logTF) throws Exception {
+    public ClientUnit(int port, String username, File userDir, TextField logTF) throws Exception {
         try {
             userSocket = new Socket(InetAddress.getLocalHost(), port);
             inputStream = new ObjectInputStream(userSocket.getInputStream());
             outputStream = new ObjectOutputStream(userSocket.getOutputStream());
-            this.userDir = userDir;
         }
         catch (UnknownHostException ex) {
             logTF.setText("[ERROR] Unknown host.\n");
@@ -32,5 +32,10 @@ public class ClientUnit {
             logTF.setText("[ERROR] Couldn't connect to server.\n");
             throw new IOException("[ERROR] Couldn't connect to server.\n");
         }
+        this.userDir = userDir;
+        this.username = username;
+        outputStream.writeObject(username);
+        logTF.setText("Sent name\n");
+
     }
 }

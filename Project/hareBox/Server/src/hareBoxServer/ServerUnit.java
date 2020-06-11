@@ -1,5 +1,6 @@
 package hareBoxServer;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
@@ -41,20 +42,31 @@ public class ServerUnit extends Thread {
     }
 
     private void awaitClients() {
-        logTA.appendText("[server] Waiting for clients\n");
+        logTA.appendText("[server] Waiting for clients...\n");
             while (true) {
                 try {
                     Socket newClient = serverSocket.accept();
-                    ObjectInputStream inputStream = new ObjectInputStream(newClient.getInputStream());
                     ObjectOutputStream outputStream = new ObjectOutputStream(newClient.getOutputStream());
-                    String username = inputStream.readUTF();
+                    ObjectInputStream inputStream = new ObjectInputStream(newClient.getInputStream());
+                    String username = (String)inputStream.readObject();
                     File userDir = new File(serverDir, username);
-                    observableUsersMap.putIfAbsent(new RegisteredUser(username, outputStream), true);
-                    new ClientThread(userDir, inputStream, outputStream);
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            observableUsersMap.putIfAbsent(new RegisteredUser(username, outputStream), true);
+                        }
+                    });
+                    (new ClientThread(userDir, inputStream, outputStream)).start();
                     logTA.appendText("[server] " + username + " logged in.\n");
                 }
-                catch (IOException ex) {
-                    logTA.appendText("[server]: Error while accepting clients!\n");
+                catch (Exception ex) {
+                    if (ex.getMessage().contains("\\w+"))
+                        logTA.appendText("[server]: Error while accepting clients!\n");
+                    else
+                    {
+                        String username = ex.getMessage();
+                        observableUsersMap.replace(new RegisteredUser(username, null), false);
+                    }
+                    ex.printStackTrace();
                 }
             }
     }

@@ -1,7 +1,6 @@
 package hareBoxServer;
 
 import java.io.*;
-import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -14,10 +13,11 @@ public class ClientThread extends Thread {
     private File userDir;
 
     public ClientThread(File userDir, ObjectInputStream inputStream, ObjectOutputStream outputStream) throws IOException {
-        inputStream = inputStream;
-        outputStream = outputStream;
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
         this.setName(userDir.getName());
         this.userDir = userDir;
+        if (userDir.mkdir()) System.out.println("created " + userDir);
         sendOfflineFiles();
     }
 
@@ -34,7 +34,7 @@ public class ClientThread extends Thread {
                 }
             }
         } catch (IOException e) {
-            throw e;
+            throw new IOException(userDir.getName());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -45,7 +45,6 @@ public class ClientThread extends Thread {
             byte[] data = Files.readAllBytes(file.toPath());
             PacketObject packet = new PacketObject( packetType, this.getName(), file.getName(), data);
             outputStream.writeObject(packet);
-
         }
         catch (IOException ex) {
             throw new IOException(String.format("[%s] Error while sending file: %s\n", this.getName(), file.getName()));

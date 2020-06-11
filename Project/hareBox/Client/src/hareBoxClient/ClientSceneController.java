@@ -24,18 +24,10 @@ public class ClientSceneController {
 
     private ClientUnit clientUnit;
 
-    public void initialize() {
-        try {
-            clientUnit = new ClientUnit(5000, userDir, logTF);
-        }
-        catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public void signOut(ActionEvent actionEvent) throws IOException {
-        Parent hareBoxParent = FXMLLoader.load(getClass().getResource("loginScene.fxml"));
+        clientUnit.outputStream.close();
 
+        Parent hareBoxParent = FXMLLoader.load(getClass().getResource("loginScene.fxml"));
         Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         window.setMinHeight(350);
         window.setMinWidth(350);
@@ -51,6 +43,12 @@ public class ClientSceneController {
         this.userDir = new File(userPath);
         userDirLabel.setText(userPath);
         usernameLabel.setText(username);
+        try {
+            clientUnit = new ClientUnit(5000, username, userDir, logTF);
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
         if (logTF.getText().equals(""))
             logTF.setText("Logged in!");
     }
