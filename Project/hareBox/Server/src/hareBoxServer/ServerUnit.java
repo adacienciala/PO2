@@ -2,12 +2,10 @@ package hareBoxServer;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.scene.control.TextArea;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,10 +50,10 @@ public class ServerUnit extends Thread {
                     File userDir = new File(serverDir, username);
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            observableUsersMap.putIfAbsent(new RegisteredUser(username, outputStream), true);
+                            observableUsersMap.put(new RegisteredUser(username, outputStream), true);
                         }
                     });
-                    (new ClientThread(userDir, inputStream, outputStream)).start();
+                    (new ClientThread(userDir, inputStream, outputStream, observableUsersMap)).start();
                     logTA.appendText("[server] " + username + " logged in.\n");
                 }
                 catch (Exception ex) {
@@ -74,7 +72,7 @@ public class ServerUnit extends Thread {
     @Override
     public void run() {
         while (true) {
-            //System.out.println("a");
+            //listen to shares
         }
     }
 }
