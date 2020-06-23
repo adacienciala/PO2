@@ -1,5 +1,3 @@
-package hareBoxServer;
-
 import java.io.ObjectOutputStream;
 
 public class RegisteredUser {

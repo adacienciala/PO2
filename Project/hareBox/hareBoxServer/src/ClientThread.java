@@ -1,5 +1,3 @@
-package hareBoxServer;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableMap;
 
@@ -24,29 +22,23 @@ public class ClientThread extends Thread {
         this.userDir = userDir;
         this.observableUsersMap = observableUsersMap;
         if (userDir.mkdir()) System.out.println("created " + userDir);
-        sendOfflineFiles();
-        receiveOfflineFiles();
+        synchronizeWithClient();
     }
 
-    private void receiveOfflineFiles() {
-        File [] myFiles = userDir.listFiles();
+    private void synchronizeWithClient() throws IOException {
         try {
-            outputStream.writeObject(myFiles);
-        } catch (IOException e) {
-            System.out.println("Failed to sent offline files to: " + userDir.getName());
-        }
-        System.out.println("Sent offline files to: " + userDir.getName());
-    }
-
-    private void sendOfflineFiles() throws IOException {
-        try {
-            List<File> userSide = Arrays.asList((File[])inputStream.readObject());
+            String [] myFiles = userDir.list();
+            sendFileList();
+            System.out.println("Czekam na liste");
+            PacketObject packet = (PacketObject) inputStream.readObject();
+            System.out.println("Got lista");
+            List<String> userSide = Arrays.asList(packet.getFileList());
             File [] serverSide = userDir.listFiles();
             if (serverSide != null)
             {
                 for (File file : serverSide)
                 {
-                    if (!userSide.contains(file))
+                    if (!userSide.contains(file.getName()))
                         sendFile(file, PacketObject.PACKET_TYPE.FILE_UPLOAD);
                 }
             }
@@ -58,11 +50,23 @@ public class ClientThread extends Thread {
         System.out.println("Finished sending");
     }
 
+    private void sendFileList() {
+        try {
+            String [] myFiles = userDir.list();
+            PacketObject packet = new PacketObject(PacketObject.PACKET_TYPE.FILE_SYNCHRONIZE,
+                            null, myFiles, null, null);
+            outputStream.writeObject(packet);
+            System.out.println("Sent file list to client");
+        }
+        catch (IOException ex) {
+            System.out.println("Failed to sent file list to client");
+        }
+    }
+
     private void sendFile(File file, PacketObject.PACKET_TYPE packetType) throws IOException {
         try {
             byte[] data = Files.readAllBytes(file.toPath());
-            PacketObject packet = new PacketObject( packetType, this.getName(), file.getName(), data);
-            System.out.println(packet.getClass().toString());
+            PacketObject packet = new PacketObject( packetType, this.getName(), null, file.getName(), data);
             outputStream.writeObject(packet);
             System.out.println("[server] Sent: " + file.getName() + " to: " + this.userDir.getName());
         }
@@ -75,7 +79,9 @@ public class ClientThread extends Thread {
     public void run() {
         while(true) {
             try {
+                System.out.println("Nasluchuje plikow");
                 PacketObject packet = (PacketObject)inputStream.readObject();
+                System.out.println("Got sth");
                 switch (packet.getType())
                 {
                     case FILE_UPLOAD:
@@ -85,15 +91,16 @@ public class ClientThread extends Thread {
                                                                 .resolve(packet.getFileName());
                         OutputStream out = Files.newOutputStream(filePath);
                         out.write(packet.getData());
+                        System.out.println("Saved: " + filePath);
                         // signal server
-                    }
                         break;
+                    }
                     case FILE_DELETE:
                     {
                         Path filePath = userDir.toPath().resolve(packet.getFileName());
                         Files.delete(filePath);
-                    }
                         break;
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 Platform.runLater(new Runnable() {

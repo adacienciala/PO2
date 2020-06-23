@@ -2,7 +2,6 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -14,7 +13,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000060;" stylesheets="@clientScene.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hareBoxClient.ClientSceneController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000060;" stylesheets="@clientScene.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientSceneController">
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
@@ -40,7 +39,7 @@
             <FontAwesomeIconView fill="WHITE" glyphName="GROUP" size="16" GridPane.rowIndex="1" />
             <ImageView fitHeight="44.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="TOP">
                <image>
-                  <Image url="@resources/hareBoxLogo.png" />
+                  <Image url="@../../resources/hareBoxLogo.png" />
                </image>
             </ImageView>
          </children>
@@ -60,13 +59,13 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="295.0" prefWidth="370.0" />
-            <JFXTreeTableView prefHeight="250.0" prefWidth="371.0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
             <Label fx:id="userDirLabel" prefHeight="18.0" prefWidth="169.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <FontAwesomeIconView fill="WHITE" glyphName="FOLDER" size="16" GridPane.rowIndex="1" />
             <Label fx:id="usernameLabel" style="-fx-font-size: 30;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
             <Label text="Status" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="BASELINE" />
             <FontAwesomeIconView fill="WHITE" glyphName="ARROW_CIRCLE_RIGHT" size="16" GridPane.rowIndex="4" GridPane.valignment="BASELINE" />
             <TextField fx:id="logTF" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <JFXListView fx:id="filesListView" orientation="HORIZONTAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

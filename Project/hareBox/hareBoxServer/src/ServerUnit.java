@@ -1,5 +1,3 @@
-package hareBoxServer;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -54,11 +52,15 @@ public class ServerUnit extends Thread {
                         }
                     });
                     (new ClientThread(userDir, inputStream, outputStream, observableUsersMap)).start();
+                    System.out.println("started thread");
                     logTA.appendText("[server] " + username + " logged in.\n");
                 }
                 catch (Exception ex) {
                     if (ex.getMessage().contains("\\w+"))
+                    {
                         logTA.appendText("[server]: Error while accepting clients!\n");
+                        System.out.println("co");
+                    }
                     else
                     {
                         String username = ex.getMessage();

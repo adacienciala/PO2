@@ -1,5 +1,3 @@
-package hareBoxServer;
-
 import com.jfoenix.controls.JFXListView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
