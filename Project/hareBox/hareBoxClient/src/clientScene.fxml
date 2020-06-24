@@ -34,7 +34,7 @@
                   <FontAwesomeIconView fill="WHITE" glyphName="SIGN_OUT" size="14" />
                </graphic>
             </JFXButton>
-            <JFXListView prefHeight="170.0" prefWidth="170.0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <JFXListView fx:id="userListView" prefHeight="170.0" prefWidth="170.0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
             <Label text="       Users" textFill="WHITE" GridPane.rowIndex="1" />
             <FontAwesomeIconView fill="WHITE" glyphName="GROUP" size="16" GridPane.rowIndex="1" />
             <ImageView fitHeight="44.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="TOP">

@@ -36,4 +36,4 @@ packages/
 /Project/hareBox/*/.idea
 /Project/hareBox/*/out
 *.iml
-
+/Project/hareBox/*/server_files

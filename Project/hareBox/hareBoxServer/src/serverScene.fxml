@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTreeView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -18,7 +19,10 @@
          <children>
             <JFXTabPane layoutX="236.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="350.0" style="-fx-background-color: #FFFFFF;" tabMinWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="226.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-10.0">
                <tabs>
-                  <Tab style="-fx-background-color: #000066;" text="SERVER" />
+                  <Tab style="-fx-background-color: #000066;" text="SERVER">
+                     <content>
+                        <JFXTreeView fx:id="serverFileTree"/>
+                     </content></Tab>
                </tabs>
             </JFXTabPane>
             <FontAwesomeIconView fill="WHITE" glyphName="GROUP" layoutX="10.0" layoutY="31.0" size="20" wrappingWidth="23.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />

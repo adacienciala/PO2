@@ -3,7 +3,9 @@ import java.io.ObjectOutputStream;
 public class RegisteredUser {
 
     private String username;
-    private ObjectOutputStream out;
+    public ObjectOutputStream out;
+
+    public boolean isOnline;
 
     public RegisteredUser(String username, ObjectOutputStream out) {
         this.username = username;
@@ -20,7 +22,7 @@ public class RegisteredUser {
 
     @Override
     public boolean equals(Object o) {
-        return username.equals(this.username);
+        return username.equals(((RegisteredUser)o).username);
     }
 
     @Override

@@ -1,3 +1,4 @@
+import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +25,8 @@ public class ClientUnit extends Thread {
     public ObjectOutputStream outputStream;
     private File userDir;
     private String username;
-    private Thread listeningThread;
+    public Thread listeningThread;
+    public JFXListView<String[]> userListView;
     public ObservableList<String> observableFilesList;
 
     private class ListeningThread extends Thread {
@@ -37,12 +39,31 @@ public class ClientUnit extends Thread {
                     System.out.println("[LT] Nasluchuje plikow " + this.getId());
                     packet = (PacketObject)inputStream.readObject();
                     System.out.println("[LT] Odebralam plik");
-                    Path filePath = userDir.toPath().resolve(packet.getFileName());
-                    System.out.println(filePath);
-                    OutputStream out = Files.newOutputStream(filePath);
-                    out.write(packet.getData());
-                    logTF.setText("Saved file: " + packet.getFileName());
-                    System.out.println("Saved file: " + packet.getFileName());
+                    if (packet.getType() == PacketObject.PACKET_TYPE.LIST_SYNCHRONIZE) {
+                        System.out.println("Got userList");
+                        userListView.getItems().clear();
+                        userListView.refresh();
+                        ArrayList<String[]> userList = new ArrayList<>();
+                        for (String user : packet.getUserList())
+                        {
+                            String username = user.substring(0);
+                            String status = user.substring(user.indexOf(" ") + 1);
+                            userList.add(new String[]{username, status});
+                        }
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                                userListView.getItems().addAll(userList);
+                            }
+                        });
+                    }
+                    else {
+                        Path filePath = userDir.toPath().resolve(packet.getFileName());
+                        System.out.println(filePath);
+                        OutputStream out = Files.newOutputStream(filePath);
+                        out.write(packet.getData());
+                        logTF.setText("Saved file: " + packet.getFileName());
+                        System.out.println("Saved file: " + packet.getFileName());
+                    }
                 }
                 catch (IOException e) {
                     logTF.setText("[ERROR] Couldn't connect to server.");
@@ -56,7 +77,7 @@ public class ClientUnit extends Thread {
         }
     }
 
-    public ClientUnit(int port, String username, File userDir, TextField logTF) throws Exception {
+    public ClientUnit(int port, String username, File userDir, JFXListView<String[]> userListView, TextField logTF) throws Exception {
         try {
             userSocket = new Socket(InetAddress.getLocalHost(), port);
             inputStream = new ObjectInputStream(userSocket.getInputStream());
@@ -74,6 +95,7 @@ public class ClientUnit extends Thread {
         this.username = username;
         outputStream.writeObject(username);
         this.observableFilesList = FXCollections.observableArrayList(new CopyOnWriteArrayList<>());
+        this.userListView = userListView;
         this.logTF = logTF;
         synchronizeWithServer();
         listeningThread = new ListeningThread();
@@ -138,8 +160,8 @@ public class ClientUnit extends Thread {
         {
             if (!observableFilesList.contains(file.getName())) {
                 try {
-                    sendFile(file, this.username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
                     System.out.println("Found to send: " + file.getName());
+                    sendFile(file, this.username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
                 }
                 catch (IOException e) {
                     System.out.println("FUCKED UP DURING SENDING MISSING FILE");
@@ -181,7 +203,7 @@ public class ClientUnit extends Thread {
     }
 
 
-        @Override
+    @Override
     public void run() {
         try {
             Thread.sleep(1000);
@@ -190,7 +212,7 @@ public class ClientUnit extends Thread {
             while (true) {
                 sendMissing(userDir.listFiles());
                 System.out.println("Checked");
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             }
         }
         catch (InterruptedException e) {

@@ -1,18 +1,22 @@
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TreeItem;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServerUnit extends Thread {
 
     TextArea logTA;
     public File serverDir;
     public ObservableMap<RegisteredUser, Boolean> observableUsersMap;
+    public ObservableList<TreeItem<File>> observableFileList;
 
     private ServerSocket serverSocket;
     public Thread awaitingThread;
@@ -21,6 +25,7 @@ public class ServerUnit extends Thread {
         this.logTA = logTA;
         serverSocket = new ServerSocket(port);
         observableUsersMap = FXCollections.observableMap(new ConcurrentHashMap<RegisteredUser, Boolean>());
+        observableFileList = FXCollections.observableList(new CopyOnWriteArrayList<TreeItem<File>>());
         awaitingThread = new Thread(this::awaitClients);
     }
 
@@ -33,7 +38,9 @@ public class ServerUnit extends Thread {
             if (usersDirs != null && usersDirs.length > 0)
             {
                 for (File userDir : usersDirs)
+                {
                     observableUsersMap.put(new RegisteredUser(userDir.getName(), null), false);
+                }
             }
     }
 
@@ -46,20 +53,18 @@ public class ServerUnit extends Thread {
                     ObjectInputStream inputStream = new ObjectInputStream(newClient.getInputStream());
                     String username = (String)inputStream.readObject();
                     File userDir = new File(serverDir, username);
+                    (new ClientThread(userDir, inputStream, outputStream, observableUsersMap)).start();
                     Platform.runLater(new Runnable() {
                         public void run() {
                             observableUsersMap.put(new RegisteredUser(username, outputStream), true);
                         }
                     });
-                    (new ClientThread(userDir, inputStream, outputStream, observableUsersMap)).start();
-                    System.out.println("started thread");
                     logTA.appendText("[server] " + username + " logged in.\n");
                 }
                 catch (Exception ex) {
                     if (ex.getMessage().contains("\\w+"))
                     {
                         logTA.appendText("[server]: Error while accepting clients!\n");
-                        System.out.println("co");
                     }
                     else
                     {
@@ -74,7 +79,19 @@ public class ServerUnit extends Thread {
     @Override
     public void run() {
         while (true) {
-            //listen to shares
+            observableFileList.clear();
+            for (File userDir : serverDir.listFiles())
+            {
+                TreeItem<File> userBranch = new TreeItem<>(userDir);
+                for (File userFile : userDir.listFiles())
+                    userBranch.getChildren().add(new TreeItem<>(userFile));
+                observableFileList.add(userBranch);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

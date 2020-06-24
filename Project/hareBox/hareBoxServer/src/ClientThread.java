@@ -1,10 +1,14 @@
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.scene.control.TreeItem;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientThread extends Thread {
@@ -12,7 +16,50 @@ public class ClientThread extends Thread {
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private File userDir;
+    private Thread listeningThread;
     private ObservableMap<RegisteredUser, Boolean> observableUsersMap;
+    private File[] lastCheckedFiles;
+    private class ListeningThread extends Thread {
+
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    System.out.println("Nasluchuje plikow");
+                    PacketObject packet = (PacketObject)inputStream.readObject();
+                    System.out.println("Got sth");
+                    switch (packet.getType())
+                    {
+                        case FILE_UPLOAD:
+                        {
+                            Path filePath = userDir.getParentFile().toPath()
+                                    .resolve(packet.getRecipient())
+                                    .resolve(packet.getFileName());
+                            OutputStream out = Files.newOutputStream(filePath);
+                            out.write(packet.getData());
+                            System.out.println("Saved: " + filePath);
+                            // signal server
+                            break;
+                        }
+                        case FILE_DELETE:
+                        {
+                            Path filePath = userDir.toPath().resolve(packet.getFileName());
+                            Files.delete(filePath);
+                            break;
+                        }
+                    }
+                    lastCheckedFiles = userDir.listFiles();
+                } catch (IOException | ClassNotFoundException e) {
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            observableUsersMap.replace(new RegisteredUser(userDir.getName(), null), false);
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+    }
 
     public ClientThread(File userDir, ObjectInputStream inputStream, ObjectOutputStream outputStream,
                         ObservableMap<RegisteredUser, Boolean> observableUsersMap) throws IOException {
@@ -23,6 +70,8 @@ public class ClientThread extends Thread {
         this.observableUsersMap = observableUsersMap;
         if (userDir.mkdir()) System.out.println("created " + userDir);
         synchronizeWithClient();
+        listeningThread = new ListeningThread();
+        listeningThread.start();
     }
 
     private void synchronizeWithClient() throws IOException {
@@ -42,6 +91,7 @@ public class ClientThread extends Thread {
                         sendFile(file, PacketObject.PACKET_TYPE.FILE_UPLOAD);
                 }
             }
+            lastCheckedFiles = userDir.listFiles();
         } catch (IOException e) {
             throw new IOException(userDir.getName());
         } catch (ClassNotFoundException e) {
@@ -75,41 +125,34 @@ public class ClientThread extends Thread {
         }
     }
 
+    private void sendMissing(File [] current) {
+        // any new files?
+        for (File file : current)
+        {
+            if (!Arrays.asList(lastCheckedFiles).contains(file)) {
+                try {
+                    System.out.println("Found to send: " + file.getName());
+                    sendFile(file, PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                }
+                catch (IOException e) {
+                    System.out.println("FUCKED UP DURING SENDING MISSING FILE");
+                }
+            }
+        }
+    }
+
     @Override
     public void run() {
-        while(true) {
-            try {
-                System.out.println("Nasluchuje plikow");
-                PacketObject packet = (PacketObject)inputStream.readObject();
-                System.out.println("Got sth");
-                switch (packet.getType())
-                {
-                    case FILE_UPLOAD:
-                    {
-                        Path filePath = userDir.getParentFile().toPath()
-                                                                .resolve(packet.getRecipient())
-                                                                .resolve(packet.getFileName());
-                        OutputStream out = Files.newOutputStream(filePath);
-                        out.write(packet.getData());
-                        System.out.println("Saved: " + filePath);
-                        // signal server
-                        break;
-                    }
-                    case FILE_DELETE:
-                    {
-                        Path filePath = userDir.toPath().resolve(packet.getFileName());
-                        Files.delete(filePath);
-                        break;
-                    }
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                Platform.runLater(new Runnable() {
-                    public void run() {
-                        observableUsersMap.replace(new RegisteredUser(userDir.getName(), null), false);
-                    }
-                });
-                break;
+        try {
+            Thread.sleep(2000);
+            while (true) {
+                sendMissing(userDir.listFiles());
+                System.out.println("Checked");
+                Thread.sleep(3000);
             }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
