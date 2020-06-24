@@ -39,7 +39,7 @@
             <FontAwesomeIconView fill="WHITE" glyphName="GROUP" size="16" GridPane.rowIndex="1" />
             <ImageView fitHeight="44.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="TOP">
                <image>
-                  <Image url="@../../resources/hareBoxLogo.png" />
+                  <Image url="@resources/hareBoxLogo.png" />
                </image>
             </ImageView>
             <JFXButton fx:id="sendBtn" contentDisplay="GRAPHIC_ONLY" minWidth="40.0" onAction="#sendFiles" text="Send" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">

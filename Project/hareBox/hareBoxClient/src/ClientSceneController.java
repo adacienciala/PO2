@@ -35,6 +35,8 @@ public class ClientSceneController {
 
     public void signOut(ActionEvent actionEvent) throws IOException {
         clientUnit.outputStream.close();
+        clientUnit.listeningThread.interrupt();
+        clientUnit.interrupt();
 
         Parent hareBoxParent = FXMLLoader.load(getClass().getResource("loginScene.fxml"));
         Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -71,12 +73,14 @@ public class ClientSceneController {
         File file = new File(String.valueOf(userDir.toPath().resolve(fileToShare)));
         for(String[] user : userListView.getSelectionModel().getSelectedItems())
         {
-            try {
-                clientUnit.sendFile(file, user[0], PacketObject.PACKET_TYPE.FILE_UPLOAD);
-            } catch (IOException e) {
-                System.out.println("Error while sharing with: " + user[0]);
-                e.printStackTrace();
-            }
+            (new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        clientUnit.sendFile(file, user[0], PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                    } catch (IOException e) { System.out.println("Error while sharing with: " + user[0]); e.printStackTrace(); }
+                }
+            })).start();
         }
 
         filesListView.setDisable(false);

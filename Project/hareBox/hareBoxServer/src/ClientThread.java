@@ -23,32 +23,19 @@ public class ClientThread extends Thread {
 
         @Override
         public void run() {
-            while(true) {
+            while(!this.isInterrupted()) {
                 try {
                     System.out.println("Nasluchuje plikow");
                     PacketObject packet = (PacketObject)inputStream.readObject();
                     System.out.println("Got sth");
-                    switch (packet.getType())
-                    {
-                        case FILE_UPLOAD:
-                        {
-                            Path filePath = userDir.getParentFile().toPath()
-                                    .resolve(packet.getRecipient())
-                                    .resolve(packet.getFileName());
-                            OutputStream out = Files.newOutputStream(filePath);
-                            out.write(packet.getData());
-                            System.out.println("Saved: " + filePath);
-                            // signal server
-                            break;
+                    (new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                dealWithFile(packet);
+                            } catch (IOException e) { e.printStackTrace(); }
                         }
-                        case FILE_DELETE:
-                        {
-                            Path filePath = userDir.toPath().resolve(packet.getFileName());
-                            Files.delete(filePath);
-                            break;
-                        }
-                    }
-                    lastCheckedFiles = userDir.listFiles();
+                    })).start();
                 } catch (IOException | ClassNotFoundException e) {
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -59,6 +46,29 @@ public class ClientThread extends Thread {
                 }
             }
         }
+
+        public void dealWithFile(PacketObject packet) throws IOException {
+            switch (packet.getType())
+            {
+                case FILE_UPLOAD:
+                {
+                    Path filePath = userDir.getParentFile().toPath()
+                            .resolve(packet.getRecipient())
+                            .resolve(packet.getFileName());
+                    OutputStream out = Files.newOutputStream(filePath);
+                    out.write(packet.getData());
+                    System.out.println("Saved: " + filePath);
+                    break;
+                }
+                case FILE_DELETE:
+                {
+                    Path filePath = userDir.toPath().resolve(packet.getFileName());
+                    Files.delete(filePath);
+                    break;
+                }
+            }
+            lastCheckedFiles = userDir.listFiles();
+        }
     }
 
     public ClientThread(File userDir, ObjectInputStream inputStream, ObjectOutputStream outputStream,
@@ -67,8 +77,8 @@ public class ClientThread extends Thread {
         this.outputStream = outputStream;
         this.setName(userDir.getName());
         this.userDir = userDir;
-        this.observableUsersMap = observableUsersMap;
         if (userDir.mkdir()) System.out.println("created " + userDir);
+        this.observableUsersMap = observableUsersMap;
         synchronizeWithClient();
         listeningThread = new ListeningThread();
         listeningThread.start();
@@ -113,7 +123,7 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void sendFile(File file, PacketObject.PACKET_TYPE packetType) throws IOException {
+    private synchronized void sendFile(File file, PacketObject.PACKET_TYPE packetType) throws IOException {
         try {
             byte[] data = Files.readAllBytes(file.toPath());
             PacketObject packet = new PacketObject( packetType, this.getName(), null, file.getName(), data);
@@ -130,13 +140,15 @@ public class ClientThread extends Thread {
         for (File file : current)
         {
             if (!Arrays.asList(lastCheckedFiles).contains(file)) {
-                try {
-                    System.out.println("Found to send: " + file.getName());
-                    sendFile(file, PacketObject.PACKET_TYPE.FILE_UPLOAD);
-                }
-                catch (IOException e) {
-                    System.out.println("FUCKED UP DURING SENDING MISSING FILE");
-                }
+                System.out.println("Found to send: " + file.getName());
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            sendFile(file, PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                        } catch (IOException e) { e.printStackTrace(); }
+                    }
+                })).start();
             }
         }
     }

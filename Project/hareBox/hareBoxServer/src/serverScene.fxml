@@ -17,11 +17,11 @@
    <children>
       <AnchorPane layoutY="-7.0" prefHeight="300.0" prefWidth="600.0" style="-fx-background-color: #000060;" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <JFXTabPane layoutX="236.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="350.0" style="-fx-background-color: #FFFFFF;" tabMinWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="226.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-10.0">
+            <JFXTabPane fx:id="fileTabPane" layoutX="236.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="350.0" style="-fx-background-color: #FFFFFF;" tabMinWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="226.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-10.0">
                <tabs>
                   <Tab style="-fx-background-color: #000066;" text="SERVER">
                      <content>
-                        <JFXTreeView fx:id="serverFileTree"/>
+                        <JFXTreeView fx:id="serverFileTree" />
                      </content></Tab>
                </tabs>
             </JFXTabPane>

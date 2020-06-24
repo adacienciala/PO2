@@ -30,7 +30,7 @@
          <children>
             <ImageView fx:id="logoImg" fitHeight="79.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER">
                <image>
-                  <Image url="@../../resources/hareBoxLogo.png" />
+                  <Image url="@resources/hareBoxLogo.png" />
                </image>
             </ImageView>
             <Separator prefHeight="20.0" prefWidth="256.0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="TOP">

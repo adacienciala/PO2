@@ -34,7 +34,7 @@ public class ClientUnit extends Thread {
         @Override
         public void run() {
             PacketObject packet;
-            while(true) {
+            while(!this.isInterrupted()) {
                 try {
                     System.out.println("[LT] Nasluchuje plikow " + this.getId());
                     packet = (PacketObject)inputStream.readObject();
@@ -57,12 +57,20 @@ public class ClientUnit extends Thread {
                         });
                     }
                     else {
-                        Path filePath = userDir.toPath().resolve(packet.getFileName());
-                        System.out.println(filePath);
-                        OutputStream out = Files.newOutputStream(filePath);
-                        out.write(packet.getData());
-                        logTF.setText("Saved file: " + packet.getFileName());
-                        System.out.println("Saved file: " + packet.getFileName());
+                        PacketObject temp = packet;
+                        (new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Path filePath = userDir.toPath().resolve(temp.getFileName());
+                                    System.out.println(filePath);
+                                    OutputStream out = Files.newOutputStream(filePath);
+                                    out.write(temp.getData());
+                                    logTF.setText("Saved file: " + temp.getFileName());
+                                    System.out.println("Saved file: " + temp.getFileName());
+                                } catch (IOException e) { e.printStackTrace(); }
+                            }
+                        })).start();
                     }
                 }
                 catch (IOException e) {
@@ -114,7 +122,14 @@ public class ClientUnit extends Thread {
                 for (File file : userSide)
                 {
                     if (!serverSide.contains(file.getName()))
-                        sendFile(file, this.username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                        (new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    sendFile(file, username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                                } catch (IOException e) { e.printStackTrace(); }
+                            }
+                        })).start();
                 }
             }
         } catch (IOException e) {
@@ -140,7 +155,7 @@ public class ClientUnit extends Thread {
         }
     }
 
-    public void sendFile(File file, String recipentName, PacketObject.PACKET_TYPE packetType) throws IOException {
+    public synchronized void sendFile(File file, String recipentName, PacketObject.PACKET_TYPE packetType) throws IOException {
         try {
             byte[] data = null;
             if (packetType == PacketObject.PACKET_TYPE.FILE_UPLOAD)
@@ -161,13 +176,15 @@ public class ClientUnit extends Thread {
         for (File file : current)
         {
             if (!observableFilesList.contains(file.getName())) {
-                try {
-                    System.out.println("Found to send: " + file.getName());
-                    sendFile(file, this.username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
-                }
-                catch (IOException e) {
-                    System.out.println("FUCKED UP DURING SENDING MISSING FILE");
-                }
+                System.out.println("Found to send: " + file.getName());
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            sendFile(file, username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                        } catch (IOException e) { System.out.println("Error while sending missing file"); e.printStackTrace(); }
+                    }
+                })).start();
                 Platform.runLater(new Runnable() {
                     public void run() {
                         observableFilesList.add(file.getName());
@@ -184,13 +201,15 @@ public class ClientUnit extends Thread {
         for (String filename : observableFilesList)
         {
             if (!currentList.contains(filename)) {
-                try {
-                    sendFile(new File(filename), this.username, PacketObject.PACKET_TYPE.FILE_DELETE);
-                    System.out.println("Found to delete: " + filename);
-                }
-                catch (IOException e) {
-                    System.out.println("Error while sending missing file");
-                }
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            sendFile(new File(filename), username, PacketObject.PACKET_TYPE.FILE_DELETE);
+                        } catch (IOException e) { System.out.println("Error while sending missing file"); e.printStackTrace(); }
+                    }
+                })).start();
+                System.out.println("Found to delete: " + filename);
                 toDelete.add(filename);
             }
         }
@@ -211,7 +230,8 @@ public class ClientUnit extends Thread {
             Thread.sleep(1000);
             for (String filename : userDir.list())
                 observableFilesList.add(filename);
-            while (true) {
+
+            while (!this.isInterrupted()) {
                 sendMissing(userDir.listFiles());
                 System.out.println("Checked");
                 Thread.sleep(1000);
