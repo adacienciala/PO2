@@ -26,7 +26,7 @@
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" valignment="TOP" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
           <RowConstraints prefHeight="200.0" vgrow="ALWAYS" />
-          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" prefHeight="50.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <JFXButton fx:id="signOutBtn" onAction="#signOut" prefHeight="34.0" prefWidth="105.0" stylesheets="@clientScene.css" text="Sign Out" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
@@ -42,6 +42,14 @@
                   <Image url="@../../resources/hareBoxLogo.png" />
                </image>
             </ImageView>
+            <JFXButton fx:id="sendBtn" contentDisplay="GRAPHIC_ONLY" minWidth="40.0" onAction="#sendFiles" text="Send" visible="false" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets bottom="5.0" />
+               </GridPane.margin>
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="SEND" />
+               </graphic>
+            </JFXButton>
          </children>
       </GridPane>
       <GridPane layoutY="5.0" prefHeight="360.0" prefWidth="381.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="10.0">
@@ -65,7 +73,7 @@
             <Label text="Status" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="BASELINE" />
             <FontAwesomeIconView fill="WHITE" glyphName="ARROW_CIRCLE_RIGHT" size="16" GridPane.rowIndex="4" GridPane.valignment="BASELINE" />
             <TextField fx:id="logTF" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <JFXListView fx:id="filesListView" orientation="HORIZONTAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <JFXListView fx:id="filesListView" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

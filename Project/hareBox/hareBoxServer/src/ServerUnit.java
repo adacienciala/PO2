@@ -79,7 +79,7 @@ public class ServerUnit extends Thread {
     @Override
     public void run() {
         while (true) {
-            observableFileList.clear();
+            //observableFileList.clear();
             for (File userDir : serverDir.listFiles())
             {
                 TreeItem<File> userBranch = new TreeItem<>(userDir);

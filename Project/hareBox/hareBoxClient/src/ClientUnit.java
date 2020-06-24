@@ -46,7 +46,7 @@ public class ClientUnit extends Thread {
                         ArrayList<String[]> userList = new ArrayList<>();
                         for (String user : packet.getUserList())
                         {
-                            String username = user.substring(0);
+                            String username = user.substring(0, user.indexOf(" "));
                             String status = user.substring(user.indexOf(" ") + 1);
                             userList.add(new String[]{username, status});
                         }
@@ -140,16 +140,18 @@ public class ClientUnit extends Thread {
         }
     }
 
-    private void sendFile(File file, String recipentName, PacketObject.PACKET_TYPE packetType) throws IOException {
+    public void sendFile(File file, String recipentName, PacketObject.PACKET_TYPE packetType) throws IOException {
         try {
             byte[] data = null;
             if (packetType == PacketObject.PACKET_TYPE.FILE_UPLOAD)
                 data = Files.readAllBytes(file.toPath());
             PacketObject packet = new PacketObject(packetType, recipentName, null, file.getName(), data);
             outputStream.writeObject(packet);
-            System.out.println("Sent: " + file.getName() + " to: " + this.userDir.getName());
+            logTF.setText("Sent: " + file.getName() + " to: " + recipentName);
+            System.out.println("Sent: " + file.getName() + " to: " + recipentName);
         }
         catch (IOException ex) {
+            ex.printStackTrace();
             throw new IOException(String.format("Error while sending file: %s\n", file.getName()));
         }
     }

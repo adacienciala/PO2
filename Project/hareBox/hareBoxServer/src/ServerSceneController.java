@@ -123,15 +123,51 @@ public class ServerSceneController {
         });
     }
 
+    private int itemInTreeIndex (TreeItem<File> userDir, String filename) {
+        int index = 0;
+        for (TreeItem<File> file : userDir.getChildren())
+        {
+            if (file.getValue().getName().equals(filename))
+                return index;
+            else
+                index++;
+        }
+        return -1;
+    }
+
     public void linkFileListToMap () {
         serverUnit.observableFileList.addListener((ListChangeListener<TreeItem<File>>) change -> {
             while (change.next()) {
-                if (change.wasAdded()) {
-                    TreeItem<File> userFile = change.getList().get(change.getFrom());
-                    serverFileTree.getRoot().getChildren().add(userFile);
+                TreeItem<File> newFile = change.getList().get(change.getFrom());
+                System.out.println("im in with " + newFile.getValue().getName());
+                if (newFile.getValue().isDirectory() && (-1 == itemInTreeIndex(serverFileTree.getRoot(), newFile.getValue().getName()))) {
+                    System.out.println("added dir " + newFile.getValue().getName());
+                    serverFileTree.getRoot().getChildren().add(newFile);
                 }
                 else {
-                    serverFileTree.getRoot().getChildren().clear();
+                    if (newFile.getValue().isDirectory()) {
+                        System.out.println("hm");
+                        continue;
+                    }
+                    int index = itemInTreeIndex(serverFileTree.getRoot(), newFile.getParent().getValue().getName());
+                    TreeItem<File> oldUserDir = serverFileTree.getRoot().getChildren().get(index);
+                    if (change.wasAdded()) {
+                        System.out.println("added file " + newFile.getValue().getName());
+                        if (-1 == itemInTreeIndex(oldUserDir, newFile.getValue().getName()))
+                            oldUserDir.getChildren().add(newFile);
+                        else {
+                            System.out.println("-- with remove " + newFile.getValue().getName());
+                            index = itemInTreeIndex(oldUserDir, newFile.getValue().getName());
+                            oldUserDir.getChildren().remove(index);
+                            oldUserDir.getChildren().add(newFile);
+                        }
+                    }
+                    else if (change.wasRemoved()) {
+                        System.out.println("removed file/dir " + newFile.getValue().getName());
+                        index = itemInTreeIndex(oldUserDir, newFile.getValue().getName());
+                        oldUserDir.getChildren().remove(index);
+                        oldUserDir.getChildren().add(newFile);
+                    }
                 }
             }
         });
@@ -148,6 +184,7 @@ public class ServerSceneController {
                     if (this.getTreeItem().equals(this.getTreeView().getRoot()))
                         return;
                     String filename = userDir.getName();
+                    System.out.println(" ---- " + filename);
                     FontAwesomeIconView icon;
                     if (userDir.isDirectory())
                         icon = new FontAwesomeIconView(FontAwesomeIcon.FOLDER);

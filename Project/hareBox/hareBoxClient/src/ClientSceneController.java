@@ -8,9 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
@@ -27,6 +25,10 @@ public class ClientSceneController {
     public TextField logTF;
     public JFXListView<String> filesListView;
     public JFXListView<String[]> userListView;
+    public JFXButton sendBtn;
+
+    private ContextMenu contextMenu;
+    private String fileToShare;
 
     public File userDir;
     private ClientUnit clientUnit;
@@ -47,6 +49,7 @@ public class ClientSceneController {
 
     void initData(String username, String userPath)
     {
+        this.userListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         this.userDir = new File(userPath);
         userDirLabel.setText(userPath);
         usernameLabel.setText(username);
@@ -61,6 +64,23 @@ public class ClientSceneController {
         }
         if (logTF.getText().equals(""))
             logTF.setText("Logged in!");
+    }
+
+
+    public void sendFiles(ActionEvent actionEvent) {
+        File file = new File(String.valueOf(userDir.toPath().resolve(fileToShare)));
+        for(String[] user : userListView.getSelectionModel().getSelectedItems())
+        {
+            try {
+                clientUnit.sendFile(file, user[0], PacketObject.PACKET_TYPE.FILE_UPLOAD);
+            } catch (IOException e) {
+                System.out.println("Error while sharing with: " + user[0]);
+                e.printStackTrace();
+            }
+        }
+
+        filesListView.setDisable(false);
+        sendBtn.setVisible(false);
     }
 
     public void customCellFactoryList () {
@@ -124,6 +144,18 @@ public class ClientSceneController {
                         icon = new FontAwesomeIconView(FontAwesomeIcon.FILE);
                     setGraphic(icon);
                     setText(filename);
+
+                    ContextMenu contextMenu = new ContextMenu();
+                    MenuItem shareItem = new MenuItem("Share");
+                    contextMenu.getItems().add(shareItem);
+                    setContextMenu(contextMenu);
+
+                    shareItem.setOnAction((event) -> {
+                        fileToShare = filename;
+                        filesListView.setDisable(true);
+                        sendBtn.setVisible(true);
+                        System.out.println("Share " + fileToShare);
+                    });
                 }
             }
         });
