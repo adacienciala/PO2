@@ -66,8 +66,8 @@ public class ClientUnit extends Thread {
                                     System.out.println(filePath);
                                     OutputStream out = Files.newOutputStream(filePath);
                                     out.write(temp.getData());
-                                    logTF.setText("Saved file: " + temp.getFileName());
-                                    System.out.println("Saved file: " + temp.getFileName());
+                                    logTF.setText("Saved file " + temp.getFileName());
+                                    System.out.println("Saved file " + temp.getFileName());
                                 } catch (IOException e) { e.printStackTrace(); }
                             }
                         })).start();
@@ -75,11 +75,13 @@ public class ClientUnit extends Thread {
                 }
                 catch (IOException e) {
                     logTF.setText("[ERROR] Couldn't connect to server.");
-                    System.out.println("Couldn't connect to server.");
+                    System.out.println("[ERROR] Couldn't connect to server.");
+                    break;
                 }
                 catch (ClassNotFoundException e) {
                     logTF.setText("[ERROR] Received package is weird.");
                     System.out.println("[ERROR] Received package is weird.");
+                    break;
                 }
             }
         }
@@ -92,12 +94,12 @@ public class ClientUnit extends Thread {
             outputStream = new ObjectOutputStream(userSocket.getOutputStream());
         }
         catch (UnknownHostException ex) {
-            logTF.setText("[ERROR] Unknown host.");
-            throw new UnknownHostException("[ERROR] Unknown host.");
+            logTF.setText("[ERROR] Unknown host");
+            throw new UnknownHostException("[ERROR] Unknown host");
         }
         catch (IOException ex) {
-            logTF.setText("[ERROR] Couldn't connect to server.");
-            throw new IOException("[ERROR] Couldn't connect to server.");
+            logTF.setText("[ERROR] Couldn't connect to server");
+            throw new IOException("[ERROR] Couldn't connect to server");
         }
         this.userDir = userDir;
         this.username = username;
@@ -148,10 +150,12 @@ public class ClientUnit extends Thread {
             PacketObject packet = new PacketObject(PacketObject.PACKET_TYPE.FILE_SYNCHRONIZE,
                                             this.username, myFiles, null, null);
             outputStream.writeObject(packet);
+            logTF.setText("Sent list of files to server");
             System.out.println("Sent list of files to server");
         }
         catch (IOException ex) {
-            System.out.println("Failed to sent file list to server");
+            logTF.setText("[ERROR] Failed to sent file list to server");
+            System.out.println("[ERROR] Failed to sent file list to server");
         }
     }
 
@@ -162,12 +166,13 @@ public class ClientUnit extends Thread {
                 data = Files.readAllBytes(file.toPath());
             PacketObject packet = new PacketObject(packetType, recipentName, null, file.getName(), data);
             outputStream.writeObject(packet);
-            logTF.setText("Sent: " + file.getName() + " to: " + recipentName);
-            System.out.println("Sent: " + file.getName() + " to: " + recipentName);
+            logTF.setText(String.format("Sent %s to %s", file.getName(), recipentName));
+            System.out.println(String.format("Sent %s to %s", file.getName(), recipentName));
         }
         catch (IOException ex) {
             ex.printStackTrace();
-            throw new IOException(String.format("Error while sending file: %s\n", file.getName()));
+            logTF.setText(String.format("[ERROR] Couldn't send file: %s", file.getName()));
+            throw new IOException(String.format("[ERROR] Couldn't send file: %s", file.getName()));
         }
     }
 
@@ -176,13 +181,17 @@ public class ClientUnit extends Thread {
         for (File file : current)
         {
             if (!observableFilesList.contains(file.getName())) {
-                System.out.println("Found to send: " + file.getName());
+                System.out.println("Found to send " + file.getName());
                 (new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             sendFile(file, username, PacketObject.PACKET_TYPE.FILE_UPLOAD);
-                        } catch (IOException e) { System.out.println("Error while sending missing file"); e.printStackTrace(); }
+                        } catch (IOException e) {
+                            logTF.setText(String.format("[ERROR] Couldn't send missing file: %s", file.getName()));
+                            System.out.println(String.format("[ERROR] Couldn't send missing file: %s", file.getName()));
+                            e.printStackTrace();
+                        }
                     }
                 })).start();
                 Platform.runLater(new Runnable() {
@@ -206,7 +215,11 @@ public class ClientUnit extends Thread {
                     public void run() {
                         try {
                             sendFile(new File(filename), username, PacketObject.PACKET_TYPE.FILE_DELETE);
-                        } catch (IOException e) { System.out.println("Error while sending missing file"); e.printStackTrace(); }
+                        } catch (IOException e) {
+                            logTF.setText(String.format("[ERROR] Couldn't send deleted file: %s", filename));
+                            System.out.println(String.format("[ERROR] Couldn't send deleted file: %s", filename));
+                            e.printStackTrace();
+                        }
                     }
                 })).start();
                 System.out.println("Found to delete: " + filename);
@@ -231,7 +244,7 @@ public class ClientUnit extends Thread {
             for (String filename : userDir.list())
                 observableFilesList.add(filename);
 
-            while (!this.isInterrupted()) {
+            while (!this.isInterrupted() && listeningThread.isAlive()) {
                 sendMissing(userDir.listFiles());
                 System.out.println("Checked");
                 Thread.sleep(1000);

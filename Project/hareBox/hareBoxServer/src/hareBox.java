@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class hareBox extends Application {
@@ -9,6 +10,7 @@ public class hareBox extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         setScene(primaryStage, "serverScene.fxml", 600, 400);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream(".\\resources\\hareBoxIconBlack.png")));
         primaryStage.show();
     }
 

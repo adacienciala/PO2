@@ -1,6 +1,7 @@
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 
 import java.io.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class ClientThread extends Thread {
 
+    private TextArea logTA;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private File userDir;
@@ -57,13 +59,18 @@ public class ClientThread extends Thread {
                             .resolve(packet.getFileName());
                     OutputStream out = Files.newOutputStream(filePath);
                     out.write(packet.getData());
-                    System.out.println("Saved: " + filePath);
+                    logTA.appendText(String.format("[%s] Saved file %s at %s\n",
+                                                userDir.getName(), filePath.getFileName(), filePath.getParent().getFileName()));
+                    System.out.println(String.format("[%s] Saved file %s at %s\n",
+                                                userDir.getName(), filePath.getFileName(), filePath.getParent().getFileName()));
                     break;
                 }
                 case FILE_DELETE:
                 {
                     Path filePath = userDir.toPath().resolve(packet.getFileName());
                     Files.delete(filePath);
+                    logTA.appendText(String.format("[%s] Deleted file %s\n", userDir.getName(), filePath.getFileName()));
+                    System.out.println(String.format("[%s] Deleted file %s\n", userDir.getName(), filePath.getFileName()));
                     break;
                 }
             }
@@ -72,12 +79,17 @@ public class ClientThread extends Thread {
     }
 
     public ClientThread(File userDir, ObjectInputStream inputStream, ObjectOutputStream outputStream,
-                        ObservableMap<RegisteredUser, Boolean> observableUsersMap) throws IOException {
+                        TextArea logTA, ObservableMap<RegisteredUser, Boolean> observableUsersMap) throws IOException {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         this.setName(userDir.getName());
         this.userDir = userDir;
-        if (userDir.mkdir()) System.out.println("created " + userDir);
+        this.logTA = logTA;
+        if (userDir.mkdir())
+        {
+            logTA.appendText(String.format("[%s] Main directory created\n", userDir.getName()));
+            System.out.println(String.format("[%s] Main directory created\n", userDir.getName()));
+        }
         this.observableUsersMap = observableUsersMap;
         synchronizeWithClient();
         listeningThread = new ListeningThread();
@@ -116,10 +128,12 @@ public class ClientThread extends Thread {
             PacketObject packet = new PacketObject(PacketObject.PACKET_TYPE.FILE_SYNCHRONIZE,
                             null, myFiles, null, null);
             outputStream.writeObject(packet);
-            System.out.println("Sent file list to client");
+            logTA.appendText(String.format("[server] Sent file list to client %s\n", userDir.getName()));
+            System.out.println(String.format("[server] Sent file list to client %s\n", userDir.getName()));
         }
         catch (IOException ex) {
-            System.out.println("Failed to sent file list to client");
+            logTA.appendText(String.format("[server] Failed to sent file list to client %s\n", userDir.getName()));
+            System.out.println(String.format("[server] Failed to sent file list to client %s\n", userDir.getName()));
         }
     }
 
@@ -128,7 +142,8 @@ public class ClientThread extends Thread {
             byte[] data = Files.readAllBytes(file.toPath());
             PacketObject packet = new PacketObject( packetType, this.getName(), null, file.getName(), data);
             outputStream.writeObject(packet);
-            System.out.println("[server] Sent: " + file.getName() + " to: " + this.userDir.getName());
+            logTA.appendText(String.format("[server] Sent file %s to %s\n", file.getName(), userDir.getName()));
+            System.out.println(String.format("[server] Sent file %s to %s\n", file.getName(), userDir.getName()));
         }
         catch (IOException ex) {
             throw new IOException(String.format("[%s] Error while sending file: %s\n", this.getName(), file.getName()));

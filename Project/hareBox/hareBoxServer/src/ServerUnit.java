@@ -53,13 +53,12 @@ public class ServerUnit extends Thread {
                     ObjectInputStream inputStream = new ObjectInputStream(newClient.getInputStream());
                     String username = (String)inputStream.readObject();
                     File userDir = new File(serverDir, username);
-                    (new ClientThread(userDir, inputStream, outputStream, observableUsersMap)).start();
+                    (new ClientThread(userDir, inputStream, outputStream, logTA, observableUsersMap)).start();
                     Platform.runLater(new Runnable() {
                         public void run() {
                             observableUsersMap.put(new RegisteredUser(username, outputStream), true);
                         }
                     });
-                    logTA.appendText("[server] " + username + " logged in.\n");
                 }
                 catch (Exception ex) {
                     if (ex.getMessage().contains("\\w+"))

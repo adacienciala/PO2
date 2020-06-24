@@ -30,7 +30,7 @@ public class ServerSceneController {
             logTA.appendText("[ERROR] Couldn't open the server unit.");
             ex.printStackTrace();
         }
-        TreeItem<File> root = new TreeItem<File>(new File("nice"));
+        TreeItem<File> root = new TreeItem<File>(new File("GOD"));
         root.setExpanded(true);
         serverFileTree.setRoot(root);
         serverFileTree.setShowRoot(false);
@@ -62,7 +62,8 @@ public class ServerSceneController {
                 try {
                     userStream.getOut().writeObject(packet);
                 } catch (IOException e) {
-                    System.out.println("[ERROR] " + userStream.getUsername() + "didn't get userlist");
+                    logTA.appendText(String.format("[ERROR] %s didn't get userlist", userStream.getUsername()));
+                    System.out.println(String.format("[ERROR] %s didn't get userlist", userStream.getUsername()));
                 }
             }
         }
