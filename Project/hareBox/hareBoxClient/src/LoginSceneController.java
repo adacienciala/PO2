@@ -15,6 +15,13 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * <code>LoginSceneController</code> objects is responsible for the logging GUI; looks specified in the fxml file. Changes scene to {@link ClientSceneController} object after user's data verification.
+ * This object is created by {@link hareBox}
+ *
+ * @author Adrianna Cieńciała
+ * @version 1.0
+ */
 public class LoginSceneController {
     public Pane loginPane;
     public ImageView logoImg;
@@ -24,6 +31,12 @@ public class LoginSceneController {
     public JFXTextField usernameTF;
     private Stage window;
 
+    /**
+     * Verifies if the data is set (different than empty string) and changes the scene to {@link ClientSceneController}; otherwise communicates an error.
+     *
+     * @param actionEvent Mouseclick on the button.
+     * @throws IOException Thrown when the scene can't be loaded.
+     */
     public void signIn(ActionEvent actionEvent) throws IOException {
         boolean incorrectData = false;
         if (pathTF.getText().equals("")) {

@@ -17,6 +17,13 @@ import javafx.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * <code>ClientSceneController</code> objects is responsible for the main GUI; looks specified in the fxml file. Initializes the {@link ClientUnit} object and is responsible for all the links between Observable Lists and GUI elements.
+ * This object is created by {@link LoginSceneController}
+ *
+ * @author Adrianna Cieńciała
+ * @version 1.0
+ */
 public class ClientSceneController {
 
     public JFXButton signOutBtn;
@@ -27,16 +34,20 @@ public class ClientSceneController {
     public JFXListView<String[]> userListView;
     public JFXButton sendBtn;
 
-    private ContextMenu contextMenu;
     private String fileToShare;
 
     public File userDir;
     private ClientUnit clientUnit;
 
+    /**
+     * Closes the client and changes the scene to {@link ClientSceneController}.
+     *
+     * @param actionEvent Mouseclick on the button.
+     * @throws IOException Thrown when there's problem with closing the outputstream or fxml can't be loaded.
+     */
     public void signOut(ActionEvent actionEvent) throws IOException {
         clientUnit.outputStream.close();
         clientUnit.listeningThread.interrupt();
-        clientUnit.interrupt();
 
         Parent hareBoxParent = FXMLLoader.load(getClass().getResource("loginScene.fxml"));
         Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -49,8 +60,12 @@ public class ClientSceneController {
         window.show();
     }
 
-    void initData(String username, String userPath)
-    {
+    /**
+     * Creates the {@link ClientUnit} object and links the user and files' lists to the GUI components.
+     * @param username
+     * @param userPath
+     */
+    void initData(String username, String userPath) {
         this.userListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         this.userDir = new File(userPath);
         userDirLabel.setText(userPath);
@@ -68,18 +83,19 @@ public class ClientSceneController {
             logTF.setText("Logged in!");
     }
 
-
+    /**
+     * Shares specific file with a range of selected users. Uses the {@link ClientUnit}'s method for sending files.
+     * Variable user[0] holds the username, user[1] holds their status (online/offline).
+     *
+     * @param actionEvent Mouseclick on the button.
+     */
     public void sendFiles(ActionEvent actionEvent) {
         File file = new File(String.valueOf(userDir.toPath().resolve(fileToShare)));
-        for(String[] user : userListView.getSelectionModel().getSelectedItems())
-        {
-            (new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        clientUnit.sendFile(file, user[0], PacketObject.PACKET_TYPE.FILE_UPLOAD);
-                    } catch (IOException e) { System.out.println("Error while sharing with: " + user[0]); e.printStackTrace(); }
-                }
+        for(String[] user : userListView.getSelectionModel().getSelectedItems()) {
+            (new Thread(() -> {
+                try {
+                    clientUnit.sendFile(file, user[0], PacketObject.PACKET_TYPE.FILE_UPLOAD);
+                } catch (IOException e) { System.out.println("Error while sharing with: " + user[0]); e.printStackTrace(); }
             })).start();
         }
 
@@ -87,6 +103,9 @@ public class ClientSceneController {
         sendBtn.setVisible(false);
     }
 
+    /**
+     * Sets custom cell factory for the users' list, so it displays their status (online/offline).
+     */
     public void customCellFactoryList () {
         userListView.setCellFactory(param -> new ListCell<String[]>() {
             @Override
@@ -110,7 +129,10 @@ public class ClientSceneController {
             }
         });
     }
-
+    /**
+     * Adds a listener to the observable list of files, so it's possible to display on <code>JFXListView</code>.
+     * Sets the cell factory for <code>JFXListView</code>, so it displays the appropriate extension icon and adds a context menu for sharing.
+     */
     public void linkListToFileList () {
         clientUnit.observableFilesList.addListener((ListChangeListener<String>) change -> {
             while (change.next()) {
@@ -139,8 +161,7 @@ public class ClientSceneController {
                     FontAwesomeIconView icon;
                     if (filename.contains(".txt"))
                         icon = new FontAwesomeIconView(FontAwesomeIcon.FILE_TEXT);
-                    else if (filename.contains(".png") || filename.contains(".jpg") || filename.contains(".jpeg"))
-                    {
+                    else if (filename.contains(".png") || filename.contains(".jpg") || filename.contains(".jpeg")) {
                         System.out.println("pic");
                         icon = new FontAwesomeIconView(FontAwesomeIcon.FILE_PHOTO_ALT);
                     }

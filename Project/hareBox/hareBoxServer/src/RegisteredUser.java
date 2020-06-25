@@ -1,5 +1,12 @@
 import java.io.ObjectOutputStream;
 
+/**
+ * <code>hareBox</code> objects is hold the important information about the user.
+ * Used in the {@link ServerUnit}'s observable map about the known clients.
+ *
+ * @author Adrianna Cieńciała
+ * @version 1.0
+ */
 public class RegisteredUser {
 
     private String username;
@@ -20,6 +27,12 @@ public class RegisteredUser {
         return out;
     }
 
+    /**
+     * Checks if objects are equal, based on the username.
+     *
+     * @param o RegisteredUser object to compare to.
+     * @return True if equal, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         return username.equals(((RegisteredUser)o).username);

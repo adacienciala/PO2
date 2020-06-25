@@ -37,3 +37,4 @@ packages/
 /Project/hareBox/*/out
 *.iml
 /Project/hareBox/*/server_files
+/Project/hareBox/*/src/META-INF
